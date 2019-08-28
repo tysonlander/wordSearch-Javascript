@@ -10,138 +10,91 @@
 
 module.exports = function search(grid, wordlist) {
   let foundWords = []
-  let wordlist2 = ['KING', 'EGT']
-  // join it & convert to up
-  // check it contains word one, two, three, etc.
-  // if it does push it onto the found words array
+  // the checkWordList function maps over the list of words passed in and checks if any of the words are in the given line in both forward and reversed order. If the word is found it is added onto the foundWords array to be returned out of the search function.
+  var checkWordList = (line) => {
+    wordlist.map(w => {
+      // checks the line for word matches in the direction the line was passed in as
+      if (line.join('').search(w.toUpperCase()) !== -1) {
+        foundWords.push(w)
+      }
+      // checks the line for word matches in the reverse direction the line was passed in as
+      if (line.reverse().join('').search(w.toUpperCase()) !== -1) {
+        foundWords.push(w)
+      }
+    });
+  }
 
-  // horizontalRight & horizontalLeft
-  grid.map(e => {
-    console.log('element:', e)
-    wordlist2.map(w => {
-      // solve for horizontalRight
-      if (e.join('').search(w.toUpperCase()) !== -1) {
-        foundWords.push(w)
-      }
-      // solve for horizontalLeft
-      if (e.reverse().join('').search(w.toUpperCase()) !== -1) {
-        foundWords.push(w)
-      }
-    })
+  // the below checks for horizontal & horizontal reverse matches
+  grid.map(line => {
+    // console.log('element:', line)
+    checkWordList(line)
   })
 
-  // verticalDown, verticalUp
+  // the below checks for vertical & vertical reverse matches
   for (let i = 0; i < grid[0].length; i++) {
     // create an array of the i'th position of each item in the grid
-    let word;
-    word = grid.map(x => {
+    let line = grid.map(x => {
       return x[i]
-    })
-    wordlist2.map(w => {
-      // solve for verticalDown
-      if (word.join('').search(w.toUpperCase()) !== -1) {
-        foundWords.push(w)
-      }
-      // solve for verticalUp
-      if (word.reverse().join('').search(w.toUpperCase()) !== -1) {
-        foundWords.push(w)
-      }
-    })
+    });
+    // console.log('vertical list:', line.join(''))
+    checkWordList(line)
   }
 
-  // diagonal from bottom left to top right ***first half***
-  // i = row
-  // j = column
+  // the below checks for diagonal matches from bottom left to top right & reverse ***first half***
   for (k = 0; k <= grid.length - 1; k++) {
-    i = k;
-    j = 0;
-    let diagonal = [];
+    i = k; // i specifies the row
+    j = 0; // j specifies the column
+    let line = [];
     while (i >= 0) {
-      diagonal.push(grid[i][j]);
+      line.push(grid[i][j]);
       i--;
       j++;
     }
-    // console.log(diagonal.join(''))
-    wordlist2.map(w => {
-      if (diagonal.join('').search(w.toUpperCase()) !== -1) {
-        foundWords.push(w)
-      }
-      if (diagonal.reverse().join('').search(w.toUpperCase()) !== -1) {
-        foundWords.push(w)
-      }
-    })
+    // console.log('backslash:', line.join(''))
+    checkWordList(line)
   }
 
-  // diagonal from bottom left to top right ***Second Half***
-  // i = row
-  // j = column
+  // the below checks for diagonal matches from bottom left to top right & reverse ***Second Half*** 
   for (k = 1; k <= grid[0].length - 1; k++) {
-    i = grid.length - 1; // row specification
-    j = k;
-    let diagonal = [];
+    i = grid.length - 1; // i specifies the row
+    j = k; // j specifies the column
+    let line = [];
     while (j <= grid[0].length - 1) {
-      diagonal.push(grid[i][j]);
+      line.push(grid[i][j]);
       i--;
       j++;
     }
-    // console.log(diagonal.join(''))
-    wordlist2.map(w => {
-      if (diagonal.join('').search(w.toUpperCase()) !== -1) {
-        foundWords.push(w)
-      }
-      if (diagonal.reverse().join('').search(w.toUpperCase()) !== -1) {
-        foundWords.push(w)
-      }
-    })
+    // console.log('backslash:', line.join(''))
+    checkWordList(line)
   }
 
-  // diagonal from top left to bottom right *** first half ***
-  // i = row
-  // j = column
+  // the below checks for diagonal matches from top left to bottom right & reverse ***First Half***
   for (k = 0; k <= grid.length - 1; k++) {
-    i = k;
-    j = grid[0].length - 1; //column
-    let diagonal = [];
+    i = k; // i specifies the row
+    j = grid[0].length - 1; // j specifies the column
+    let line = [];
     while (i >= 0) {
-      diagonal.push(grid[i][j]);
+      line.push(grid[i][j]);
       i--;
       j--;
     }
-    console.log(diagonal.join(''))
-    wordlist2.map(w => {
-      if (diagonal.join('').search(w.toUpperCase()) !== -1) {
-        foundWords.push(w)
-      }
-      if (diagonal.reverse().join('').search(w.toUpperCase()) !== -1) {
-        foundWords.push(w)
-      }
-    })
+    // console.log('forward slash', line.join(''))
+    checkWordList(line)
   }
 
-  // diagonal from top left to bottom right *** second half ***
-  // i = row
-  // j = column
+  // the below checks for diagonal matches from top left to bottom right & reverse ***Second Half***
   for (k = 1; k <= grid.length - 1; k++) {
-    i = k; // row
-    j = 0; //column
-    let diagonal = [];
+    i = k; // i specifies the row
+    j = 0; // j specifies the column
+    let line = [];
     while (i <= grid.length - 1) {
-      diagonal.push(grid[i][j]);
+      line.push(grid[i][j]);
       i++;
       j++;
     }
-    console.log(diagonal.join(''))
-    wordlist2.map(w => {
-      if (diagonal.join('').search(w.toUpperCase()) !== -1) {
-        foundWords.push(w)
-      }
-      if (diagonal.reverse().join('').search(w.toUpperCase()) !== -1) {
-        foundWords.push(w)
-      }
-    })
+    // console.log('forward slash:', line.join(''))
+    checkWordList(line)
   }
-
   return foundWords
 }
-
 // run with: node index.js sample/grid.txt sample/words.txt
